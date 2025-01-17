@@ -12,9 +12,8 @@ Enhance your online store with the Product Preview extension, allowing customers
 * **Increased Conversion Rates:**  By allowing customers to quickly view product details and add them to the cart, this extension streamlines the shopping process.
 * **Add to Cart:**  The ability to add the product directly to the cart from the modal without navigating away from the page.
 * **Integration Compatibility:** Seamlessly integrate with existing e-commerce platforms for smooth operation and enhanced functionality.
-* **Promotional Tools:** Utilize gift cards as part of promotional campaigns, driving sales and customer engagement.
 * **Multilingual Support:** The extension will function across 19 different languages, which are currently supported by Bagisto.
-* **Version Compatible:** The extension is compatible with both Bagisto version 2.0.0 and the latest version 2.2.2. You can find these versions listed under the Tags [Tags](https://github.com/brainstreaminfo/bagistogiftcard/tags).
+
 
 # Requirements:
 * Bagisto: v2.0.0, v2.2.2
@@ -27,13 +26,13 @@ Unzip the respective extension zip and then merge "packages" folder into project
 * Goto config/app.php file and add following line under 'providers'
 
 ```
-Brainstream\Giftcard\Providers\GiftcardServiceProvider::class
+Brainstreaml\ProductQuickView\Providers\ProductQuickViewServiceProvider::class
 ```
 
 * Goto composer.json file and add following line under 'psr-4'
 
 ```
-"Brainstream\\Giftcard\\": "packages/Brainstream/Giftcard/src"
+"Brainstream\\ProductQuickView\\": "packages/Webkul/ProductQuickView/src"
 ```
 * Run these below commands to complete the setup:
 
@@ -47,23 +46,14 @@ php artisan migrate
 php artisan optimize:clear
 ```
 
-* Run the below command and select the Giftcard Service provider from the selection :
+```
+composer require tightenco/ziggy
+```
+
+* Add the below code in the ProductResource File of Shop Package :
 
 ```
-php artisan vendor:publish --force
-```
-* Include the PayPal credentials in the loadPayPalScript method. Additionally, ensure that the credentials are entered in the PayPal payment gateway section within the Bagisto admin panel.
-
-* Add the mail credentials in the .env file to receive the giftcard via email.
-
-* Add the below code in the CartResource File after the payment_method_title :
-
-```
-$this->mergeWhen($this->giftcard_number, [
-    'giftcard_number'           => $this->giftcard_number,
-    'giftcard_amount'           => $this->giftcard_amount,
-    'remaining_giftcard_amount' => $this->remaining_giftcard_amount,
-]),
+'short_description' => $this->short_description,
 ```
 
 
