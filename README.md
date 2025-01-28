@@ -26,7 +26,7 @@ Unzip the respective extension zip and then merge "packages" folder into project
 * Goto config/app.php file and add following line under 'providers'
 
 ```
-Brainstreaml\ProductQuickView\Providers\ProductQuickViewServiceProvider::class
+Brainstream\ProductQuickView\Providers\ProductQuickViewServiceProvider::class
 ```
 
 * Goto composer.json file and add following line under 'psr-4'
