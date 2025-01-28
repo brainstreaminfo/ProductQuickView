@@ -44,7 +44,6 @@ class ProductQuickViewController extends Controller
 
             return response()->json($settings);
         } catch (\Exception $e) {
-            Log::error('Error fetching settings: ' . $e->getMessage());
             return response()->json([
                 'show_full_description' => true,
                 'show_product_number' => true,
@@ -96,7 +95,6 @@ class ProductQuickViewController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error saving settings: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Error saving settings: ' . $e->getMessage()
             ], 500);

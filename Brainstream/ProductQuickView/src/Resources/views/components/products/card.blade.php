@@ -395,7 +395,7 @@
                         @click="closeQuickView"
                         aria-label="Close preview"
                     >
-                        <img src="{{ asset('close.svg') }}" alt="Close" class="h-4 w-4">
+                    <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/x-mark.svg" alt="Close" class="h-4 w-4">
                     </button>
 
         
