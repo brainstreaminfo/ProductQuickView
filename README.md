@@ -32,7 +32,7 @@ Brainstream\ProductQuickView\Providers\ProductQuickViewServiceProvider::class
 * Goto composer.json file and add following line under 'psr-4'
 
 ```
-"Brainstream\\ProductQuickView\\": "packages/Webkul/ProductQuickView/src"
+"Brainstream\\ProductQuickView\\": "packages/Brainstream/ProductQuickView/src"
 ```
 * Run these below commands to complete the setup:
 
