@@ -200,6 +200,130 @@
                             <circle cx="12" cy="12" r="3" />
                         </svg>
                     </span>
+
+                    <!-- Product Preview Modal - Moved outside the product cards -->
+        <Teleport to="body">
+            <div 
+                v-if="showModal" 
+                class="fixed inset-0 z-[60] flex items-center justify-center p-3"
+                role="dialog"
+                aria-modal="true"
+            >
+                <!-- Modal Backdrop -->
+                <div 
+                    class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+                    @click="closeQuickView"
+                ></div>
+            
+                <!-- Modal Container -->
+                <div 
+                    class="relative w-auto max-w-4xl bg-white rounded-lg overflow-hidden sm:h-[300px]"
+                    style="width: 850px; height: 650px;" 
+                    @click.stop
+                >
+                    <!-- Close Button -->
+                    <button 
+                        class="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full"
+                        style="background-color:#e5e7eb;"
+                        @click="closeQuickView"
+                        aria-label="Close preview"
+                    >
+                    <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/x-mark.svg" alt="Close" class="h-4 w-4">
+                    </button>
+
+        
+                    <!-- Modal Content - Using flex instead of grid -->
+                    <div class="flex flex-row h-[600px]">
+                        <!-- Left Side - Image -->
+                        <div class="w-1/2 bg-gray-50 p-6 flex items-center justify-center" style="min-height: 100%; height: 100%;">
+                            <x-shop::media.images.lazy
+                                class="max-h-[300px] md:max-h-[500px] w-auto object-contain"
+                                style="max-height: 500px; width: 100%;"
+                                ::src="selectedProduct?.base_image?.medium_image_url"
+                                ::alt="selectedProduct?.name"
+                            />
+                        </div>
+    
+                        <!-- Right Side - Product Details -->
+                        <div class="w-1/2 p-4 overflow-y-auto flex flex-col">
+                            <h2 class="mb-2 text-2xl font-semibold text-gray-900">
+                                @{{ selectedProduct?.name }}
+                            </h2>
+    
+                            <div class="mb-4 text-xl font-semibold text-gray-900" v-html="selectedProduct?.price_html"></div>
+    
+                            <div class="mb-4 border-t border-b py-4 space-y-2">
+                                <!-- SKU -->
+                                <div v-if="settings.show_sku === true && selectedProduct?.sku" 
+                                    class="flex items-center gap-2 text-sm text-blue-700">
+                                    <span class="icon-product text-black font-bold" style="font-size: x-large;"></span>                
+                                    <span>@lang('productquickview::app.productquickview.sku'): @{{ selectedProduct?.sku }}</span>
+                                </div>
+                           
+                                <!-- Availability -->
+                                <div class="mt-3 font-semibold flex items-center gap-1 text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M5 8h14l1 12H4L5 8z" />
+                                        <path d="M9 11V6a3 3 0 0 1 6 0v5" />
+                                    </svg>                                    
+
+                                    <span 
+                                        :class="[
+                                            selectedProduct?.is_saleable ? 'text-emerald-600' : 'text-red-600',
+                                            'icon-check text-lg'
+                                        ]"
+                                    ></span>
+
+                                    <span :class="selectedProduct?.is_saleable ? 'text-emerald-600' : 'text-red-600'">
+                                        @{{ selectedProduct?.is_saleable ? '@lang('productquickview::app.productquickview.instock')' : '@lang('productquickview::app.productquickview.outofstock')' }}
+                                    </span>
+
+                                    <!-- Display Quantity if Available -->
+                                    <span v-if="selectedProduct?.is_saleable && settings.show_quantity" class="text-gray-700 text-sm">
+                                        (@{{ selectedProduct?.qty }} available)
+                                    </span>
+                                </div>
+    
+                                <!-- Product Number -->
+                                <div v-if="settings.show_product_number === true && selectedProduct?.product_number" 
+                                    class="mt-3 flex items-center gap-2 text-sm text-red-600">
+                                    <span class="icon-product text-black font-bold" style="font-size: x-large;"></span>                
+                                    <span>@lang('productquickview::app.productquickview.product_number'): @{{ selectedProduct?.product_number }}</span>
+                                </div>
+                            </div>
+    
+                                <!-- Short Description -->
+                                <div v-if="selectedProduct?.short_description" class="mb-4 text-sm text-gray-600 prose prose-sm"
+                                    style="max-height: 100px; overflow-y: auto;"
+                                    v-html="formattedShortDescription">
+                                </div>
+
+                                <!-- Full Description (Expandable) -->
+                                <div v-if="settings.show_full_description && selectedProduct?.description" class="mb-4">
+                                    <details class="border border-gray-300 rounded-lg">
+                                        <summary class="px-4 py-2 text-lg font-semibold cursor-pointer bg-gray-200 hover:bg-gray-300">
+                                            @lang('productquickview::app.productquickview.description')
+                                        </summary>
+                                        <div 
+                                            v-html="formattedFullDescription" 
+                                            class="p-4 text-sm text-gray-600 overflow-y-auto"
+                                            style="max-height: 200px;"
+                                        ></div>
+                                    </details>
+                                </div>
+    
+                            <!-- Add to Cart Button -->
+                            <button class="secondary-button w-full max-w-full p-2.5 text-sm font-medium"
+                                    :disabled="!selectedProduct?.is_saleable || isAddingToCart"
+                                    @click="addToCart(selectedProduct)">
+                                <span v-if="isAddingToCart"></span>
+                                <span v-else>@lang('productquickview::app.productquickview.addtocart')</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
                 </div>
             </div>
         </div>
@@ -367,130 +491,6 @@
 
             </div>
         </div>
-
-        <!-- Product Preview Modal - Moved outside the product cards -->
-        <Teleport to="body">
-            <div 
-                v-if="showModal" 
-                class="fixed inset-0 z-[60] flex items-center justify-center p-3"
-                role="dialog"
-                aria-modal="true"
-            >
-                <!-- Modal Backdrop -->
-                <div 
-                    class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-                    @click="closeQuickView"
-                ></div>
-            
-                <!-- Modal Container -->
-                <div 
-                    class="relative w-auto max-w-4xl bg-white rounded-lg overflow-hidden sm:h-[300px]"
-                    style="width: 850px; height: 650px;" 
-                    @click.stop
-                >
-                    <!-- Close Button -->
-                    <button 
-                        class="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full"
-                        style="background-color:#e5e7eb;"
-                        @click="closeQuickView"
-                        aria-label="Close preview"
-                    >
-                    <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/x-mark.svg" alt="Close" class="h-4 w-4">
-                    </button>
-
-        
-                    <!-- Modal Content - Using flex instead of grid -->
-                    <div class="flex flex-row h-[600px]">
-                        <!-- Left Side - Image -->
-                        <div class="w-1/2 bg-gray-50 p-6 flex items-center justify-center" style="min-height: 100%; height: 100%;">
-                            <x-shop::media.images.lazy
-                                class="max-h-[300px] md:max-h-[500px] w-auto object-contain"
-                                style="max-height: 500px; width: 100%;"
-                                ::src="selectedProduct?.base_image?.medium_image_url"
-                                ::alt="selectedProduct?.name"
-                            />
-                        </div>
-    
-                        <!-- Right Side - Product Details -->
-                        <div class="w-1/2 p-4 overflow-y-auto flex flex-col">
-                            <h2 class="mb-2 text-2xl font-semibold text-gray-900">
-                                @{{ selectedProduct?.name }}
-                            </h2>
-    
-                            <div class="mb-4 text-xl font-semibold text-gray-900" v-html="selectedProduct?.price_html"></div>
-    
-                            <div class="mb-4 border-t border-b py-4 space-y-2">
-                                <!-- SKU -->
-                                <div v-if="settings.show_sku === true && selectedProduct?.sku" 
-                                    class="flex items-center gap-2 text-sm text-blue-700">
-                                    <span class="icon-product text-black font-bold" style="font-size: x-large;"></span>                
-                                    <span>@lang('productquickview::app.productquickview.sku'): @{{ selectedProduct?.sku }}</span>
-                                </div>
-                           
-                                <!-- Availability -->
-                                <div class="mt-3 font-semibold flex items-center gap-1 text-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M5 8h14l1 12H4L5 8z" />
-                                        <path d="M9 11V6a3 3 0 0 1 6 0v5" />
-                                    </svg>                                    
-
-                                    <span 
-                                        :class="[
-                                            selectedProduct?.is_saleable ? 'text-emerald-600' : 'text-red-600',
-                                            'icon-check text-lg'
-                                        ]"
-                                    ></span>
-
-                                    <span :class="selectedProduct?.is_saleable ? 'text-emerald-600' : 'text-red-600'">
-                                        @{{ selectedProduct?.is_saleable ? '@lang('productquickview::app.productquickview.instock')' : '@lang('productquickview::app.productquickview.outofstock')' }}
-                                    </span>
-
-                                    <!-- Display Quantity if Available -->
-                                    <span v-if="selectedProduct?.is_saleable && settings.show_quantity" class="text-gray-700 text-sm">
-                                        (@{{ selectedProduct?.qty }} available)
-                                    </span>
-                                </div>
-    
-                                <!-- Product Number -->
-                                <div v-if="settings.show_product_number === true && selectedProduct?.product_number" 
-                                    class="mt-3 flex items-center gap-2 text-sm text-red-600">
-                                    <span class="icon-product text-black font-bold" style="font-size: x-large;"></span>                
-                                    <span>@lang('productquickview::app.productquickview.product_number'): @{{ selectedProduct?.product_number }}</span>
-                                </div>
-                            </div>
-    
-                                <!-- Short Description -->
-                                <div v-if="selectedProduct?.short_description" class="mb-4 text-sm text-gray-600 prose prose-sm"
-                                    style="max-height: 100px; overflow-y: auto;"
-                                    v-html="formattedShortDescription">
-                                </div>
-
-                                <!-- Full Description (Expandable) -->
-                                <div v-if="settings.show_full_description && selectedProduct?.description" class="mb-4">
-                                    <details class="border border-gray-300 rounded-lg">
-                                        <summary class="px-4 py-2 text-lg font-semibold cursor-pointer bg-gray-200 hover:bg-gray-300">
-                                            @lang('productquickview::app.productquickview.description')
-                                        </summary>
-                                        <div 
-                                            v-html="formattedFullDescription" 
-                                            class="p-4 text-sm text-gray-600 overflow-y-auto"
-                                            style="max-height: 200px;"
-                                        ></div>
-                                    </details>
-                                </div>
-    
-                            <!-- Add to Cart Button -->
-                            <button class="secondary-button w-full max-w-full p-2.5 text-sm font-medium"
-                                    :disabled="!selectedProduct?.is_saleable || isAddingToCart"
-                                    @click="addToCart(selectedProduct)">
-                                <span v-if="isAddingToCart"></span>
-                                <span v-else>@lang('productquickview::app.productquickview.addtocart')</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </Teleport>
 
     </script>
 
